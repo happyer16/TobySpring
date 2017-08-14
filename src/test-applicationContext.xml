@@ -8,9 +8,9 @@
     </bean>
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource" >
         <property name="driverClass" value="com.mysql.jdbc.Driver"></property>
-        <property name="url" value="jdbc:mysql://localhost/testdb?useUnicode=true&amp;characterEncoding=UTF8&amp;jdbcCompliantTruncation=false&amp;useOldUTF8Behavior=true"></property>
-        <property name="username" value="spring"></property>
-        <property name="password" value="book"></property>
+        <property name="url" value="jdbc:mysql://localhost/spring"></property>
+        <property name="username" value="root"></property>
+        <property name="password" value="85218523"></property>
     </bean>    
 
 </beans>
