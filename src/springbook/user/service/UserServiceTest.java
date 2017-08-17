@@ -65,4 +65,24 @@ public class UserServiceTest {
   public void bean() {
     assertThat(this.userService, is(notNullValue()));
   }
+
+  @Test
+  public void add() {
+    userDao.deleteAll();
+
+    User userWithLevel = users.get(4); // GOLD 레벨 ( 레벨을 초기화하지 않아야 함 )
+    User userWithoutLevel = users.get(0); // BASIC 레벨
+    userWithoutLevel.setLevel(null);
+
+    userService.add(userWithLevel);
+    userService.add(userWithoutLevel);
+
+    User userWithLevelRead = userDao.get(userWithLevel.getId());
+    User userWithoutLevelRead = userDao.get(userWithoutLevel.getId());
+
+    assertThat(userWithLevelRead.getLevel(), is(userWithLevel.getLevel()));
+    assertThat(userWithoutLevelRead.getLevel(), is(userWithoutLevel.getLevel()));
+
+
+  }
 }
