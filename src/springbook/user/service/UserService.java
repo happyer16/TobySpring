@@ -15,6 +15,46 @@ public class UserService {
 
   public void upgradeLevels() {
     List<User> users = userDao.getAll();
+    for (User user : users) {
+      if (canUpgradeLevel(user))
+        upgradeLevel(user);
+    }
+  }
+
+  private boolean canUpgradeLevel(User user) {
+    Level currentLevel = user.getLevel();
+
+    switch (currentLevel) {
+      case BASIC:
+        return (user.getLogin() >= 50);
+      case SILVER:
+        return (user.getRecommend() >= 30);
+      case GOLD:
+        return false;
+      default:
+        throw new IllegalArgumentException("Unknown level : " + currentLevel);
+    }
+  }
+
+  /**
+   * upgradeLevel을 따로 두면 좋은 점?
+   * 
+   * 만약 나중에 레벨이 오른 걸 사용자에게 알려줘야 하는 로직을 추가할 경우,
+   * 
+   * 어디를 수정해야 할 지 쉽게 찾을 수 있음.
+   * 
+   * @param user
+   */
+  private void upgradeLevel(User user) {
+    if (user.getLevel() == Level.BASIC)
+      user.setLevel(Level.SILVER);
+    else if (user.getLevel() == Level.SILVER)
+      user.setLevel(Level.GOLD);
+    userDao.update(user);
+  }
+
+  public void upgradeLevelsOld() {
+    List<User> users = userDao.getAll();
 
     for (User user : users) {
       Boolean changed = false; // 레벨 변화 체크 플래그
@@ -38,6 +78,8 @@ public class UserService {
        * 2) Level이 추가된다면?
        * 
        * enum도 수정하고 if문은 추가된 만큼 늘어난다. -> 메소드는 점점 복잡해짐
+       * 
+       * 3) 현재 레벨과 업그레이드 조건을 동시에 비교하고 있다.
        */
       // SILVER 레벨 업그레이드 작업
       else if (user.getLevel() == Level.SILVER && user.getRecommend() >= 30) {
