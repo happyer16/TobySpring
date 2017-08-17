@@ -46,11 +46,21 @@ public class UserService {
    * @param user
    */
   private void upgradeLevel(User user) {
-    if (user.getLevel() == Level.BASIC)
-      user.setLevel(Level.SILVER);
-    else if (user.getLevel() == Level.SILVER)
-      user.setLevel(Level.GOLD);
+
+    /**
+     * user로 upgradeLevel을 옮긴 이유 : 사용자 정보를 담고 있는 단순한 자바빈이지만 내부 정보를 다루는 기능이 있을 수 있다. UserService가 일일이
+     * User의 레벨을 수정하는 것보다는 정보를 변경하라고 User에게 요청하는 것이 나음
+     */
+    user.upgradeLevel();
     userDao.update(user);
+
+    // 기존 코드의 문제점 : 다음 레벨도 알아야 되고... Gold 예외 처리도 없고.... 레벨이 많아진다면 if문도 많아진다.
+    // if (user.getLevel() == Level.BASIC)
+    // user.setLevel(Level.SILVER);
+    // else if (user.getLevel() == Level.SILVER)
+    // user.setLevel(Level.GOLD);
+    // userDao.update(user);
+
   }
 
   public void upgradeLevelsOld() {
