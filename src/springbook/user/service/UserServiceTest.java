@@ -3,6 +3,8 @@ package springbook.user.service;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static springbook.user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
+import static springbook.user.service.UserService.MIN_RECOMMEND_FOR_GOLD;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,10 +35,11 @@ public class UserServiceTest {
 
   @Before
   public void setUp() {
-    users = Arrays.asList(new User("gyumee", "박성철", "springno1", Level.BASIC, 49, 0),
-        new User("gyumee2", "박성4철", "springno61", Level.BASIC, 50, 0),
-        new User("gyumee3", "박성5철", "springno71", Level.SILVER, 60, 29),
-        new User("leegw700", "이길원", "springno2", Level.SILVER, 60, 30),
+    users = Arrays.asList(
+        new User("gyumee", "박성철", "springno1", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER - 1, 0),
+        new User("gyumee2", "박성4철", "springno61", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER, 0),
+        new User("gyumee3", "박성5철", "springno71", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD - 1),
+        new User("leegw700", "이길원", "springno2", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD),
         new User("bumjin", "박범진", "springno3", Level.GOLD, 100, 40));
   }
 

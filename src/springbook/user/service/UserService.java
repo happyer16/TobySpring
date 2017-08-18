@@ -21,14 +21,17 @@ public class UserService {
     }
   }
 
+  public static final int MIN_LOGCOUNT_FOR_SILVER = 50;
+  public static final int MIN_RECOMMEND_FOR_GOLD = 30;
+
   private boolean canUpgradeLevel(User user) {
     Level currentLevel = user.getLevel();
 
     switch (currentLevel) {
       case BASIC:
-        return (user.getLogin() >= 50);
+        return (user.getLogin() >= MIN_LOGCOUNT_FOR_SILVER);
       case SILVER:
-        return (user.getRecommend() >= 30);
+        return (user.getRecommend() >= MIN_RECOMMEND_FOR_GOLD);
       case GOLD:
         return false;
       default:
@@ -49,7 +52,6 @@ public class UserService {
 
     /**
      * user로 upgradeLevel을 옮긴 이유 : 사용자 정보를 담고 있는 단순한 자바빈이지만 내부 정보를 다루는 기능이 있을 수 있다. UserService가 일일이
-     * User의 레벨을 수정하는 것보다는 정보를 변경하라고 User에게 요청하는 것이 나음
      */
     user.upgradeLevel();
     userDao.update(user);
