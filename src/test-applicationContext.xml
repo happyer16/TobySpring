@@ -6,12 +6,13 @@
 
 	<bean id="userService" class="springbook.user.service.UserService">
 		<property name="userDao" ref="userDao" />
+		<property name="dataSource" ref="dataSource" />
 	</bean>
-	
+
 	<bean id="userDao" class="springbook.user.dao.UserDaoJdbc">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	
+
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
 		<property name="driverClass" value="com.mysql.jdbc.Driver"></property>
@@ -21,7 +22,7 @@
 	</bean>
 
 
-	
+
 
 
 </beans>

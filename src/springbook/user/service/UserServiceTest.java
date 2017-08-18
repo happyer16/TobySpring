@@ -10,6 +10,8 @@ import static springbook.user.service.UserService.MIN_RECOMMEND_FOR_GOLD;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,11 +31,14 @@ public class UserServiceTest {
   // Test 대상인 UserService 빈을 제공받을 수 있도록 @Autowired가 붙은 인스턴스 변수를 선언해 줌
   @Autowired
   UserService userService;
+  @Autowired
+  DataSource dataSource;
 
   @Autowired
   UserDao userDao;
 
   List<User> users;
+
 
   @Before
   public void setUp() {
@@ -46,7 +51,7 @@ public class UserServiceTest {
   }
 
   @Test
-  public void upgradeLevels() {
+  public void upgradeLevels() throws Exception {
     userDao.deleteAll();
 
     for (User user : users)
@@ -110,12 +115,15 @@ public class UserServiceTest {
 
   /**
    * 레벨 업그레이드를 시도하다가 중간에 예외가 발생한 경우, 원래 상태로 돌아가는지 테스트
+   * 
+   * @throws Exception
    */
   @Test
-  public void upgradeAllOrNothing() {
+  public void upgradeAllOrNothing() throws Exception {
     UserService testUserService = new TestUserService(users.get(3).getId());
     testUserService.setUserDao(this.userDao); // 특별한 목적으로만 사용하는 것이니, 번거롭게 스프링 빈으로 등록할 필요 없이 수동으로 DI
                                               // 해줌
+    testUserService.setDataSource(this.dataSource);
     userDao.deleteAll();
 
     for (User user : users)
