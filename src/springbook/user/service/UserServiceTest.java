@@ -127,7 +127,7 @@ public class UserServiceTest {
 
     }
 
-    checkLevelUpgraded(users.get(1), false);
+    checkLevelUpgraded(users.get(1), false); // Test는 실패하게 됨 ( upgradeLevel()은 하나의 트랜잭션이 아니기 때문에 )
   }
 
   private void checkLevelUpgraded(User user, boolean upgraded) {
