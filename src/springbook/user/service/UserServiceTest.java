@@ -18,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import springbook.user.dao.UserDao;
 import springbook.user.domain.Level;
@@ -33,6 +34,8 @@ public class UserServiceTest {
   UserService userService;
   @Autowired
   DataSource dataSource;
+  @Autowired
+  PlatformTransactionManager transactionManager;
 
   @Autowired
   UserDao userDao;
@@ -124,6 +127,7 @@ public class UserServiceTest {
     testUserService.setUserDao(this.userDao); // 특별한 목적으로만 사용하는 것이니, 번거롭게 스프링 빈으로 등록할 필요 없이 수동으로 DI
                                               // 해줌
     testUserService.setDataSource(this.dataSource);
+    testUserService.setTransactionManager(this.transactionManager);
     userDao.deleteAll();
 
     for (User user : users)

@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -16,6 +15,7 @@ import springbook.user.domain.User;
 public class UserService {
   private UserDao userDao;
   private DataSource dataSource;
+  private PlatformTransactionManager transactionManager;
 
   public void setUserDao(UserDao userDao) {
     this.userDao = userDao;
@@ -25,13 +25,15 @@ public class UserService {
     this.dataSource = dataSource;
   }
 
+  public void setTransactionManager(PlatformTransactionManager transactionManager) {
+    this.transactionManager = transactionManager;
+  }
+
   public void upgradeLevels() throws Exception {
 
-    PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
-    // JDBC 트랜잭션 추상 오브젝트 생성
 
     TransactionStatus status =
-        transactionManager.getTransaction(new DefaultTransactionDefinition());
+        this.transactionManager.getTransaction(new DefaultTransactionDefinition());
 
 
     try {
@@ -40,9 +42,9 @@ public class UserService {
         if (canUpgradeLevel(user))
           upgradeLevel(user);
       }
-      transactionManager.commit(status);// 트랜잭션 커밋
+      this.transactionManager.commit(status);// 트랜잭션 커밋
     } catch (Exception e) {
-      transactionManager.rollback(status);// 트랜잭션 롤백
+      this.transactionManager.rollback(status);// 트랜잭션 롤백
       throw e;
     }
   }

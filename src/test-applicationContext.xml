@@ -7,6 +7,12 @@
 	<bean id="userService" class="springbook.user.service.UserService">
 		<property name="userDao" ref="userDao" />
 		<property name="dataSource" ref="dataSource" />
+		<property name="transactionManager" ref="transactionManager" />
+	</bean>
+
+	<bean id="transacntionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="userDao" class="springbook.user.dao.UserDaoJdbc">
