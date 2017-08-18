@@ -27,6 +27,10 @@ public class UserDaoJdbc implements UserDao {
     }
 
   };
+
+  /**
+   * Connection 사용방법 1) 미리 생성돼서 트랜젝션 동기화 저장소에등록된 DB 컨넥션이 없는 경우 자체적으로 생성 2) 있는 경우 그대로 사용
+   */
   private JdbcTemplate jdbcTemplate;
 
   public void setDataSource(DataSource dataSource) {
