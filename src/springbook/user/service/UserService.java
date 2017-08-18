@@ -48,7 +48,7 @@ public class UserService {
    * 
    * @param user
    */
-  private void upgradeLevel(User user) {
+  protected void upgradeLevel(User user) {
 
     /**
      * user로 upgradeLevel을 옮긴 이유 : 사용자 정보를 담고 있는 단순한 자바빈이지만 내부 정보를 다루는 기능이 있을 수 있다. UserService가 일일이

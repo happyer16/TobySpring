@@ -3,6 +3,7 @@ package springbook.user.service;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static springbook.user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
 import static springbook.user.service.UserService.MIN_RECOMMEND_FOR_GOLD;
 
@@ -19,6 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import springbook.user.dao.UserDao;
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
+import springbook.user.service.UserServiceTest.TestUserService.TestUserServiceException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-applicationContext.xml")
@@ -85,7 +87,57 @@ public class UserServiceTest {
 
     assertThat(userWithLevelRead.getLevel(), is(userWithLevel.getLevel()));
     assertThat(userWithoutLevelRead.getLevel(), is(userWithoutLevel.getLevel()));
+  }
 
+  static class TestUserService extends UserService {
+    private String id;
+
+    private TestUserService(String id) {
+      this.id = id;
+    }
+
+    @Override
+    protected void upgradeLevel(User user) {
+      if (user.getId().equals(this.id)) // 지정된 id의 User 오브젝트가 발견되면 예외를 던져서 작업을 강제로 중단시킨다.
+        throw new TestUserServiceException();
+      super.upgradeLevel(user);
+    }
+
+    static class TestUserServiceException extends RuntimeException {
+
+    }
+  }
+
+  /**
+   * 레벨 업그레이드를 시도하다가 중간에 예외가 발생한 경우, 원래 상태로 돌아가는지 테스트
+   */
+  @Test
+  public void upgradeAllOrNothing() {
+    UserService testUserService = new TestUserService(users.get(3).getId());
+    testUserService.setUserDao(this.userDao); // 특별한 목적으로만 사용하는 것이니, 번거롭게 스프링 빈으로 등록할 필요 없이 수동으로 DI
+                                              // 해줌
+    userDao.deleteAll();
+
+    for (User user : users)
+      userDao.add(user);
+    try {
+      testUserService.upgradeLevels();
+      fail("TestUserServiceException expected"); // 중간에 예외를 안 던저주면 문제가 있는거임
+    } catch (TestUserServiceException e) { // 예외를 잡아서 어떤 작업을 진행
+
+    }
+
+    checkLevelUpgraded(users.get(1), false);
+  }
+
+  private void checkLevelUpgraded(User user, boolean upgraded) {
+    User userUpdate = userDao.get(user.getId());
+    if (upgraded)
+      assertThat(userUpdate.getLevel(), is(user.getLevel().nextLevel()));
+    else
+      assertThat(userUpdate.getLevel(), is(user.getLevel()));
 
   }
+
+
 }
