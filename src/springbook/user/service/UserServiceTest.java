@@ -4,8 +4,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static springbook.user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
-import static springbook.user.service.UserService.MIN_RECOMMEND_FOR_GOLD;
+import static springbook.user.service.UserServiceImpl.MIN_LOGCOUNT_FOR_SILVER;
+import static springbook.user.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 
 import java.util.Arrays;
 import java.util.List;
@@ -97,7 +97,7 @@ public class UserServiceTest {
     assertThat(userWithoutLevelRead.getLevel(), is(userWithoutLevel.getLevel()));
   }
 
-  static class TestUserService extends UserService {
+  static class TestUserService extends UserServiceImpl {
     private String id;
 
     private TestUserService(String id) {
@@ -123,11 +123,15 @@ public class UserServiceTest {
    */
   @Test
   public void upgradeAllOrNothing() throws Exception {
-    UserService testUserService = new TestUserService(users.get(3).getId());
+    TestUserService testUserService = new TestUserService(users.get(3).getId());
     testUserService.setUserDao(this.userDao); // 특별한 목적으로만 사용하는 것이니, 번거롭게 스프링 빈으로 등록할 필요 없이 수동으로 DI
                                               // 해줌
-    testUserService.setDataSource(this.dataSource);
-    testUserService.setTransactionManager(this.transactionManager);
+
+    
+    UserServiceTx txUserService=new UserServiceTx();
+    txUserService.setTransactionManager(transactionManager);
+    txUserService.setUserService(testUserService);
+    
     userDao.deleteAll();
 
     for (User user : users)
