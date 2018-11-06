@@ -38,7 +38,9 @@ public class UppercaseHandler implements InvocationHandler {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     Object ret = method.invoke(target,args);
-    if(ret instanceof String)
+
+    // 리턴 타입과 메소드 이름이 일치하는 경우에만 부가기능을 적용한다.
+    if(ret instanceof String && method.getName().startsWith("say"))
       return ret.toString().toUpperCase();
     else
       return ret;
